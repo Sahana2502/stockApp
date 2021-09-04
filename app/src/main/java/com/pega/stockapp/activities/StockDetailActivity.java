@@ -42,6 +42,9 @@ public class StockDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_detail);
         setToolbar();
+
+        //receives and displays the selected stock object.
+        //The object is Parcelable object
         Intent intent = getIntent();
         displayStockDetails(intent);
 
@@ -53,6 +56,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
     }
 
+    //The method polls the API every 10 seconds.
     private void scheduleTimerTask() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -62,6 +66,7 @@ public class StockDetailActivity extends AppCompatActivity {
         }, 0, 10000);
     }
 
+    //The method customises the tool bar to add back button
     private void setToolbar() {
         actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -70,6 +75,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
     }
 
+    //The method sends the API request to Stocks API and recieves response
     private void getStocks() {
 
         OkHttpClient client = new OkHttpClient();
@@ -77,7 +83,9 @@ public class StockDetailActivity extends AppCompatActivity {
                 .url(STOCK_API)
                 .build();
         try {
+
             client.newCall(request).enqueue(new Callback() {
+                //If response is not received due to network failure/error
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     runOnUiThread(new Runnable() {
@@ -88,7 +96,7 @@ public class StockDetailActivity extends AppCompatActivity {
                         }
                     });
                 }
-
+                //On successfully receiving of data from API, the updated stock value is displayed
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     displayStocks(response);
@@ -99,11 +107,11 @@ public class StockDetailActivity extends AppCompatActivity {
         }
     }
 
+    //The response object is looked up for the required company's current stock value and UI is updated.
     private void displayStocks(Response response) {
         try {
             JSONObject responseObject = new JSONObject(response.body().string());
             Double price = (double) responseObject.getJSONObject(currentCompany).getDouble("price");
-            Log.d("Detail ", "" + price);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -119,8 +127,8 @@ public class StockDetailActivity extends AppCompatActivity {
     }
 
 
+    //The method displays the stock object details selected by the user. A parcelable object is received as an intent
     private void displayStockDetails(Intent intent) {
-
         TextView companySymbol = findViewById(R.id.text_detail_company_symbol);
         TextView companyName = findViewById(R.id.text_detail_company_name);
         currentStockPrice = findViewById(R.id.text_detail_current_price);
@@ -138,15 +146,14 @@ public class StockDetailActivity extends AppCompatActivity {
         dailyHighPrice.setText(String.format("%.2f", stock.getDailyHighPrice()));
         dailyLowPrice.setText(String.format("%.2f", stock.getDailyLowPrice()));
 
-
     }
 
 
+    //If a response is not received, the user is alerted
     public void displayAlert() {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(StockDetailActivity.this);
         alertBuilder.setMessage(getResources().getString(R.string.error));
         alertBuilder.setCancelable(true);
-
         alertBuilder.setPositiveButton(
                 "GOT IT",
                 (dialog, id) -> dialog.cancel());
@@ -156,6 +163,7 @@ public class StockDetailActivity extends AppCompatActivity {
     }
 
 
+    //Implementing the up button feature for left chevron on the tool bar
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

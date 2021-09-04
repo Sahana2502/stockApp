@@ -50,7 +50,7 @@ public class StockListActivity extends AppCompatActivity {
         super.onResume();
         scheduleTimerTask();
     }
-
+    //The method polls the API every 10 seconds.
     private void scheduleTimerTask() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -60,6 +60,7 @@ public class StockListActivity extends AppCompatActivity {
         }, 0, 10000);
     }
 
+    //The method sends the API request to Stocks API and recieves response
     private void getStocks() {
 
         OkHttpClient client = new OkHttpClient();
@@ -68,6 +69,7 @@ public class StockListActivity extends AppCompatActivity {
                 .build();
         try {
             client.newCall(request).enqueue(new Callback() {
+                //If response is not received due to network failure/error
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     runOnUiThread(new Runnable() {
@@ -78,7 +80,7 @@ public class StockListActivity extends AppCompatActivity {
                         }
                     });
                 }
-
+                //On successfully receiving of data from API, the updated stock value is displayed
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     displayStocks(response);
@@ -89,6 +91,7 @@ public class StockListActivity extends AppCompatActivity {
         }
     }
 
+    //The response object is parsed and is displayed in a recycler View
     public void displayStocks(Response response) {
         String companySymbol, companyName = null;
         double currentPrice = 0, lowPrice = 0, highPrice = 0;
@@ -116,6 +119,7 @@ public class StockListActivity extends AppCompatActivity {
             stocks.add(stock);
         }
         runOnUiThread(new Runnable() {
+            //Update the UI
             @Override
             public void run() {
                 updateRecords();
@@ -136,6 +140,7 @@ public class StockListActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    //set the recycler view and attach the adapter
     private void setUpRecyclerView() {
         recyclerView = findViewById(R.id.rv_stocks);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -143,6 +148,7 @@ public class StockListActivity extends AppCompatActivity {
         recyclerView.setAdapter(stockAdapter);
     }
 
+    //The method updates the UI to display the current stock price of the company
     private void updateRecords() {
         stockAdapter = new StockAdapter(stocks);
         recyclerView.setAdapter(stockAdapter);
