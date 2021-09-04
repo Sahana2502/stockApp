@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Stock App</string>
+    <string name="app_name">Stocker</string>
     <string name="tool_bar_title">Popular Stocks</string>
     <string name="title_activity_stock_details">StockDetailsActivity</string>
 
