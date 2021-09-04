@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">StockApp</string>
+    <string name="app_name">Stock App</string>
+    <string name="tool_bar_title">Popular Stocks</string>
+    <string name="title_activity_stock_details">StockDetailsActivity</string>
+
+
+    <!-- Strings used for fragments in Stock Details activity -->
+    <string name="title_company_symbol">Symbol</string>
+    <string name="title_company_name">Name</string>
+    <string name="title_current_price">Current Price</string>
+    <string name="title_daily_low_price">Daily Low</string>
+    <string name="title_daily_high_price">Daily High</string>
+
+
+    <!--Error String -->
+    <string name="error">Oops! Something is wrong :(</string>
+
+
+
 </resources>
