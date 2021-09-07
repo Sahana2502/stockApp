@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.pega.stockapp.R;
 import com.pega.stockapp.model.Stock;
+import com.pega.stockapp.util.AppConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,10 +32,11 @@ import okhttp3.Response;
 public class StockDetailActivity extends AppCompatActivity {
 
 
+    private static final String TAG ="StockDetailActivity";
     private ActionBar actionBar;
     private String currentCompany;
     private TextView currentStockPrice;
-    private static final String STOCK_API = "https://71iztxw7wh.execute-api.us-east-1.amazonaws.com/interview/favorite-stocks";
+
 
 
     @Override
@@ -43,8 +45,10 @@ public class StockDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_stock_detail);
         setToolbar();
 
-        //receives and displays the selected stock object.
-        //The object is Parcelable object
+        /* Receives and displays the selected stock object.
+        The object class implements the Parcelable interface
+        */
+
         Intent intent = getIntent();
         displayStockDetails(intent);
 
@@ -53,17 +57,16 @@ public class StockDetailActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         scheduleTimerTask();
-
     }
 
-    //The method polls the API every 10 seconds.
+    //The method polls the API every 10 seconds without any delay.
     private void scheduleTimerTask() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 getStocks();
             }
-        }, 0, 10000);
+        }, AppConstants.delay, AppConstants.period);
     }
 
     //The method customises the tool bar to add back button
@@ -75,12 +78,12 @@ public class StockDetailActivity extends AppCompatActivity {
 
     }
 
-    //The method sends the API request to Stocks API and recieves response
+    //The method sends the API request to Stocks API and receives response
     private void getStocks() {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(STOCK_API)
+                .url(AppConstants.STOCK_API)
                 .build();
         try {
 
@@ -91,14 +94,16 @@ public class StockDetailActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            //The alert dialog to be displayed only when the activity is visible on the screen
                             if (!isFinishing() && hasWindowFocus())
                                 displayAlert();
                         }
                     });
                 }
-                //On successfully receiving of data from API, the updated stock value is displayed
+                //On successfully receiving data from API, the stock value is displayed
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    Log.i(TAG,"Response received "+response.body());
                     displayStocks(response);
                 }
             });
@@ -126,7 +131,6 @@ public class StockDetailActivity extends AppCompatActivity {
 
     }
 
-
     //The method displays the stock object details selected by the user. A parcelable object is received as an intent
     private void displayStockDetails(Intent intent) {
         TextView companySymbol = findViewById(R.id.text_detail_company_symbol);
@@ -136,12 +140,13 @@ public class StockDetailActivity extends AppCompatActivity {
         TextView dailyLowPrice = findViewById(R.id.text_detail_low_price);
 
         Stock stock = (Stock) intent.getParcelableExtra("Stock Object");
-        actionBar.setTitle(stock.getCompanySymbol());
-
-
         currentCompany = stock.getCompanySymbol();
+        Log.i(TAG,"The chosen company is "+companyName);
+        //The action bar displays the name symbol of the chosen company
+        actionBar.setTitle(currentCompany);
         companySymbol.setText(stock.getCompanySymbol());
         companyName.setText(stock.getCompanyName());
+
         currentStockPrice.setText(String.format("%.2f", stock.getCurrentStockPrice()));
         dailyHighPrice.setText(String.format("%.2f", stock.getDailyHighPrice()));
         dailyLowPrice.setText(String.format("%.2f", stock.getDailyLowPrice()));

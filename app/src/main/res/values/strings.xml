@@ -13,7 +13,7 @@
 
 
     <!--Error String -->
-    <string name="error">Oops! Something is wrong :(</string>
+    <string name="error_message_network">Oops! Something is wrong :(</string>
 
 
 

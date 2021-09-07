@@ -1,6 +1,7 @@
 package com.pega.stockapp.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pega.stockapp.R;
 import com.pega.stockapp.adapter.StockAdapter;
 import com.pega.stockapp.model.Stock;
+import com.pega.stockapp.util.AppConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,11 +32,11 @@ import okhttp3.Response;
 
 
 public class StockListActivity extends AppCompatActivity {
-    private OkHttpClient client;
+    private static final String TAG ="StockListActivity";
     private ArrayList<Stock> stocks;
     private StockAdapter stockAdapter;
     private RecyclerView recyclerView;
-    private static final String STOCK_API = "https://71iztxw7wh.execute-api.us-east-1.amazonaws.com/interview/favorite-stocks";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +59,15 @@ public class StockListActivity extends AppCompatActivity {
             public void run() {
                 getStocks();
             }
-        }, 0, 10000);
+        }, AppConstants.delay, AppConstants.period);
     }
 
-    //The method sends the API request to Stocks API and recieves response
+    //The method sends the API request to Stocks API and receives response
     private void getStocks() {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(STOCK_API)
+                .url(AppConstants.STOCK_API)
                 .build();
         try {
             client.newCall(request).enqueue(new Callback() {
@@ -75,6 +77,7 @@ public class StockListActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            //The alert dialog to be displayed only when the activity is visible on the screen
                             if(!isFinishing() && hasWindowFocus())
                                 displayAlert();
                         }
@@ -83,6 +86,7 @@ public class StockListActivity extends AppCompatActivity {
                 //On successfully receiving of data from API, the updated stock value is displayed
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    Log.i(TAG,"Response received "+response.body());
                     displayStocks(response);
                 }
             });
@@ -98,11 +102,14 @@ public class StockListActivity extends AppCompatActivity {
         Stock stock;
         stocks = new ArrayList<>();
         JSONObject responseObject = null;
+
         try {
             responseObject = new JSONObject(response.body().string());
         } catch (JSONException | IOException jsonException) {
             jsonException.printStackTrace();
         }
+
+        //Get all the keys from json response and extract the required fields
         Iterator keys = responseObject.keys();
         while (keys.hasNext()) {
             companySymbol = (String) keys.next();
@@ -115,6 +122,7 @@ public class StockListActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            //create stock object and add to the arrayList.
             stock = new Stock(companySymbol, companyName, currentPrice, lowPrice, highPrice);
             stocks.add(stock);
         }
