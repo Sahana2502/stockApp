@@ -56,6 +56,7 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
             companyName = itemView.findViewById(R.id.text_company_name);
             currentStockPrice = itemView.findViewById(R.id.text_stock_price);
 
+            //Handles click action on recycler view element
             itemView.setOnClickListener(view -> {
                 Intent intent = new Intent(itemView.getContext(), StockDetailActivity.class);
                 intent.putExtra("Stock Object", stocks.get(getAdapterPosition()));

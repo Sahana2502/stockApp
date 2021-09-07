@@ -50,8 +50,10 @@ public class StockListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        //Called whenever the activity becomes visible
         scheduleTimerTask();
     }
+
     //The method polls the API every 10 seconds.
     private void scheduleTimerTask() {
         Timer timer = new Timer();
@@ -83,7 +85,7 @@ public class StockListActivity extends AppCompatActivity {
                         }
                     });
                 }
-                //On successfully receiving of data from API, the updated stock value is displayed
+                //On successfully receiving  data from API, the updated stock value is displayed
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     Log.i(TAG,"Response received "+response.body());
@@ -137,7 +139,7 @@ public class StockListActivity extends AppCompatActivity {
 
     public void displayAlert() {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(StockListActivity.this);
-        alertBuilder.setMessage(getResources().getString(R.string.error));
+        alertBuilder.setMessage(getResources().getString(R.string.error_message_network));
         alertBuilder.setCancelable(true);
 
         alertBuilder.setPositiveButton(

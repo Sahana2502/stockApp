@@ -157,7 +157,7 @@ public class StockDetailActivity extends AppCompatActivity {
     //If a response is not received, the user is alerted
     public void displayAlert() {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(StockDetailActivity.this);
-        alertBuilder.setMessage(getResources().getString(R.string.error));
+        alertBuilder.setMessage(getResources().getString(R.string.error_message_network));
         alertBuilder.setCancelable(true);
         alertBuilder.setPositiveButton(
                 "GOT IT",
