@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,6 +37,7 @@ public class StockListActivity extends AppCompatActivity {
     private ArrayList<Stock> stocks;
     private StockAdapter stockAdapter;
     private RecyclerView recyclerView;
+    private ActionBar actionBar;
 
 
     @Override
@@ -43,6 +45,7 @@ public class StockListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_list);
         setUpRecyclerView();
+        setToolbar();
 
     }
 
@@ -52,6 +55,12 @@ public class StockListActivity extends AppCompatActivity {
         super.onResume();
         //Called whenever the activity becomes visible
         scheduleTimerTask();
+    }
+
+    private void setToolbar() {
+        actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle(getResources().getString(R.string.tool_bar_title));
     }
 
     //The method polls the API every 10 seconds.
